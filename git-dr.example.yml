@@ -1,0 +1,21 @@
+# Required:
+USERNAME: your username
+APP_PASSWORD: your password
+
+OUTPUT_PATH: where to save the git repos
+
+# Optional:
+# true: log to stdout, false: log to LOG_DIR
+# LOG_STD: yes
+
+# directory to save log files in
+# LOG_DIR: /tmp/
+
+# max file size of log in megabytes
+# LOG_MAX_SIZE: 10
+
+# max number of old log files to retain
+# LOG_MAX_BACKUPS: 3
+
+# max number of days to retain old log files
+# LOG_MAX_AGE: 365
