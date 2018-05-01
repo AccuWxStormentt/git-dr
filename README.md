@@ -15,4 +15,4 @@ Check git-dr.example.yml for configuration options.
 Config options can also be specified via environment variables.
 
 # Running
-Simply run the compiled binary. If there's an error, it'll return an exit code of 1 and log its error. Otherwise it'll return 0.
+Simply run the compiled binary. If there's an error, it'll angrily panic and return an exit code of 1 and log its error. Otherwise it'll return 0.
