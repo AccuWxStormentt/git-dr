@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 // Request is a collection containing an endpoint, method, and headers. It's essentially an abstraction of an http request
@@ -34,7 +36,7 @@ func (r *Request) Do() (*PageCollection, error) {
 
 		req, err := http.NewRequest(r.method, endpoint, nil)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "http request initialization failed")
 		}
 
 		for k, v := range r.headers {
@@ -43,18 +45,18 @@ func (r *Request) Do() (*PageCollection, error) {
 
 		resp, err := httpClient.Do(req)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "http request execution failed")
 		}
 
 		respString, err := ioutil.ReadAll(resp.Body)
 		defer resp.Body.Close()
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "http response reading failed")
 		}
 
 		page, err := ParsePage(string(respString))
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "http response parsing failed")
 		}
 
 		pages.Add(page)

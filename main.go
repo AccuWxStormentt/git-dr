@@ -24,6 +24,7 @@ func init() {
 }
 
 func main() {
+	log.Println("[BEGIN]")
 	// create api client
 	auth := newAuth()
 	client := api.Client{auth}
@@ -35,6 +36,7 @@ func main() {
 		log.Panicf("unable to make request: %s \n", err)
 	}
 
+	repoCount := 0
 	// process api response
 	for hasNext := true; hasNext; hasNext = pages.Next() {
 		p := pages.Current()
@@ -42,6 +44,7 @@ func main() {
 		repositories := p["values"].([]interface{})
 		for _, v := range repositories {
 			name, scmType, cloneLink := getRepoInfo(v)
+			log.Printf("[REPO] %s\n", name)
 
 			// if the repo hasn't been cloned, we need to clone it.
 			// if the repo has already been cloned, we just need to update it.
@@ -69,8 +72,12 @@ func main() {
 					log.Panicf("error changing directory: %s", err)
 				}
 			}
+
+			repoCount++
 		}
 	}
+	log.Printf("[REPORT] Handled %d repos\n", repoCount)
+	log.Println("[END]")
 }
 
 // newAuth creates a new api.Authenticator. Right now it only creates a BasicAuth object. Later, if it needs to, it can support OAuth2 or whatever else Bitbucket wants to do

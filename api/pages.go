@@ -3,6 +3,8 @@ package api
 import (
 	"encoding/json"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // Page is the BitBucket page wrapper. It contains links to the next page and contents of the current page.
@@ -43,5 +45,5 @@ func ParsePage(s string) (Page, error) {
 	decoder := json.NewDecoder(strings.NewReader(s))
 	err := decoder.Decode(&p)
 
-	return p, err
+	return p, errors.Wrap(err, "json decoding failed")
 }
