@@ -95,7 +95,7 @@ func getRepoInfo(v interface{}) (name, scmType, cloneLink string) {
 			cloneLink = link["href"].(string)
 		}
 	}
-	// nevermind, the nightmare is over. now we have a "cloneLink" which is a string
+	// nevermind, the nightmare is over. we're good now
 
 	return
 }
