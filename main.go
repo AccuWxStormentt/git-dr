@@ -67,10 +67,6 @@ func main() {
 					git.Update(name)
 				}
 				cmd.Chdir("../")
-
-				if err != nil {
-					log.Panicf("error changing directory: %s", err)
-				}
 			}
 
 			repoCount++
