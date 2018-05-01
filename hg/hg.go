@@ -14,7 +14,7 @@ func Clone(url string) {
 
 // Update updates the hg repo at the specified path
 func Update(name string) {
-	hg("pull ...")
+	hg("pull")
 	hg("update")
 }
 
