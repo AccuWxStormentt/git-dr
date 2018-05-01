@@ -17,7 +17,7 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Panicf("unable to read config file: %s", err)
+		log.Fatalf("unable to read config file: %s", err)
 	}
 
 	// true: log to stdout, false: log to LOG_DIR

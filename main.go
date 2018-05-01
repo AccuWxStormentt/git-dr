@@ -33,7 +33,7 @@ func main() {
 	req := client.NewRequest("https://api.bitbucket.org/2.0/repositories/%s", "accuweather")
 	pages, err := req.Do()
 	if err != nil {
-		log.Panicf("unable to make request: %s \n", err)
+		log.Fatalf("unable to make request: %s \n", err)
 	}
 
 	repoCount := 0

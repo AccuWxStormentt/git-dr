@@ -15,7 +15,7 @@ func initDirectories() {
 		log.Printf("[MKDIR] %s\n", outPath)
 		err = os.MkdirAll(outPath, 0755)
 		if err != nil {
-			log.Panicf("error making directory: %s", err)
+			log.Fatalf("error making directory: %s", err)
 		}
 	}
 
