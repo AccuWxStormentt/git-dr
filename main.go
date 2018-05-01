@@ -23,44 +23,6 @@ func init() {
 	initDirectories()
 }
 
-// initConfig loads the viper configuration from git-dr.[json|yml|toml]
-func initConfig() {
-	viper.SetConfigName("git-dr")
-	viper.AddConfigPath(".")
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Panicf("unable to read config file: %s", err)
-	}
-
-	// true: log to stdout, false: log to LOG_DIR
-	viper.SetDefault("LOG_STD", true)
-	// directory to save log files in
-	viper.SetDefault("LOG_DIR", os.TempDir())
-	// max file size of log in megabytes
-	viper.SetDefault("LOG_MAX_SIZE", 10)
-	// max number of old log files to retain
-	viper.SetDefault("LOG_MAX_BACKUPS", 3)
-	// max number of days to retain old log files
-	viper.SetDefault("LOG_MAX_AGE", 365)
-
-}
-
-// initDirectories creates the output directory & cd's into it
-func initDirectories() {
-	outPath := viper.GetString("OUTPUT_PATH")
-	if _, err := os.Stat(outPath); os.IsNotExist(err) {
-		log.Printf("[MKDIR] %s\n", outPath)
-		err = os.MkdirAll(outPath, 0755)
-		if err != nil {
-
-			log.Panicf("error making directory: %s", err)
-		}
-	}
-
-	cmd.Chdir(outPath)
-}
-
 func main() {
 	// create api client
 	auth := newAuth()
@@ -92,14 +54,14 @@ func main() {
 					git.Clone(cloneLink)
 				}
 			} else {
-				log.Printf("[PULL] %s\n", name)
+				log.Printf("[UPDATE] %s\n", name)
 
 				cmd.Chdir(name)
 				switch scmType {
 				case "hg":
-					hg.Update(cloneLink)
+					hg.Update(name)
 				case "git":
-					git.Update(cloneLink)
+					git.Update(name)
 				}
 				cmd.Chdir("../")
 
