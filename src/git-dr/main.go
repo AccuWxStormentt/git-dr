@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"bitbucket.org/accuweather/git-dr/api"
-	"bitbucket.org/accuweather/git-dr/cmd"
-	"bitbucket.org/accuweather/git-dr/git"
-	"bitbucket.org/accuweather/git-dr/hg"
+	"bitbucket.org/accuweather/git-dr/src/git-dr/api"
+	"bitbucket.org/accuweather/git-dr/src/git-dr/cmd"
+	"bitbucket.org/accuweather/git-dr/src/git-dr/git"
+	"bitbucket.org/accuweather/git-dr/src/git-dr/hg"
 	"github.com/spf13/viper"
 )
 

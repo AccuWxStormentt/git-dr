@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "github.com/pmaseberg/lumberjack"
-  version = "1.0.0"
+  branch = "v2.0"
 
 [[constraint]]
   name = "github.com/spf13/viper"

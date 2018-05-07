@@ -49,10 +49,10 @@
   version = "v0.8.0"
 
 [[projects]]
+  branch = "v2.0"
   name = "github.com/pmaseberg/lumberjack"
   packages = ["."]
-  revision = "8ec9c6b748e0c75183863d208c8442319ddc5321"
-  version = "v1.0"
+  revision = "143782f3bb32da5dbec0f562cc0d9286dcdb92ea"
 
 [[projects]]
   name = "github.com/spf13/afero"
@@ -115,6 +115,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d854b9748e70e03b42d3c523d4472840309ec643d38c0da148fe57717c1d55ad"
+  inputs-digest = "d85c6ddbbb61df3502916c2cf07ab6ba480c0fd36b68c3f2dc9b1f855de38331"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"bitbucket.org/accuweather/git-dr/cmd"
+	"bitbucket.org/accuweather/git-dr/src/git-dr/cmd"
 	"github.com/spf13/viper"
 )
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"bitbucket.org/accuweather/git-dr/cmd"
+	"bitbucket.org/accuweather/git-dr/src/git-dr/cmd"
 )
 
 // Clone clones the repo at the url provided
