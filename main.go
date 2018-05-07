@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -33,7 +34,7 @@ func main() {
 	req := client.NewRequest("https://api.bitbucket.org/2.0/repositories/%s", "accuweather")
 	pages, err := req.Do()
 	if err != nil {
-		log.Fatalf("unable to make request: %s \n", err)
+		log.Fatalf("unable to make request: %s", err)
 	}
 
 	repoCount := 0
@@ -94,8 +95,11 @@ func getRepoInfo(v interface{}) (name, scmType, cloneLink string) {
 	cloneLinks := links["clone"].([]interface{})
 	for _, v := range cloneLinks {
 		link := v.(map[string]interface{})
-		if link["name"].(string) == "ssh" {
-			cloneLink = link["href"].(string)
+		if link["name"].(string) == "https" {
+			username := viper.GetString("USERNAME")
+			password := viper.GetString("APP_PASSWORD")
+			combined := fmt.Sprintf("%s:%s", username, password)
+			cloneLink = strings.Replace(link["href"].(string), username, combined, -1)
 		}
 	}
 	// nevermind, the nightmare is over. we're good now
