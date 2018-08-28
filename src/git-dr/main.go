@@ -88,7 +88,7 @@ func newAuth() api.Authenticator {
 func getRepoInfo(v interface{}) (name, scmType, cloneLink string) {
 	// go's type system is an unending nightmare
 	repo := v.(map[string]interface{})
-	name = repo["name"].(string)
+	name = repo["slug"].(string)
 	scmType = repo["scm"].(string)
 
 	links := repo["links"].(map[string]interface{})
