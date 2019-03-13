@@ -10,7 +10,7 @@ import (
 
 // initDirectories creates the output directory & cd's into it
 func initDirectories() {
-	outPath := viper.GetString("OUTPUT_PATH")
+	outPath := viper.GetString("output_path")
 	if _, err := os.Stat(outPath); os.IsNotExist(err) {
 		log.Printf("[MKDIR] %s\n", outPath)
 		err = os.MkdirAll(outPath, 0755)

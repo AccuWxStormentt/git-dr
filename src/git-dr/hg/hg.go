@@ -15,8 +15,8 @@ func Clone(url string) {
 
 // Update updates the hg repo at the specified path
 func Update(name string) {
-	username := viper.GetString("USERNAME")
-	password := viper.GetString("APP_PASSWORD")
+	username := viper.GetString("bitbucket.username")
+	password := viper.GetString("bitbucket.app_password")
 	hg("pull -u --config auth.x.prefix=* --config auth.x.username=%s --config auth.x.password=%s", username, password)
 }
 

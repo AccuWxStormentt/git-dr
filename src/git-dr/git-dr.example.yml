@@ -1,21 +1,28 @@
 # Required:
-USERNAME: your username
-APP_PASSWORD: your password
+bitbucket:
+  username: your username
+  app_password: your app password
 
-OUTPUT_PATH: where to save the git repos
+# Required:
+github:
+  username: your username
+  app_password: your app password
 
-# Optional:
-# true: log to stdout, false: log to LOG_DIR
-# LOG_STD: yes
+output_path: where to save the git repos
 
-# directory to save log files in
-# LOG_DIR: /tmp/
+# logging:
+  # Optional:
+  # true: log to stdout, false: log to LOG_DIR
+  # stdout: yes
 
-# max file size of log in megabytes
-# LOG_MAX_SIZE: 10
+  # directory to save log files in
+  # dir: /tmp/
 
-# max number of old log files to retain
-# LOG_MAX_BACKUPS: 3
+  # max file size of log in megabytes
+  # max_size: 10
 
-# max number of days to retain old log files
-# LOG_MAX_AGE: 365
+  # max number of old log files to retain
+  # max_backups: 3
+
+  # max number of days to retain old log files
+  # max_age: 365

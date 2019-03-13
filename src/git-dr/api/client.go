@@ -14,6 +14,7 @@ func (c *Client) NewRequest(URL string, args ...interface{}) *Request {
 	r := &Request{
 		endpoint,
 		"GET",
+		"",
 		make(map[string]string),
 	}
 

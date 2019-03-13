@@ -21,13 +21,13 @@ func initConfig() {
 	}
 
 	// true: log to stdout, false: log to LOG_DIR
-	viper.SetDefault("LOG_STD", true)
+	viper.SetDefault("logging.stdout", true)
 	// directory to save log files in
-	viper.SetDefault("LOG_DIR", os.TempDir())
+	viper.SetDefault("logging.dir", os.TempDir())
 	// max file size of log in megabytes
-	viper.SetDefault("LOG_MAX_SIZE", 10)
+	viper.SetDefault("logging.max_size", 10)
 	// max number of old log files to retain
-	viper.SetDefault("LOG_MAX_BACKUPS", 3)
+	viper.SetDefault("logging.max_backups", 3)
 	// max number of days to retain old log files
-	viper.SetDefault("LOG_MAX_AGE", 365)
+	viper.SetDefault("logging.max_age", 365)
 }

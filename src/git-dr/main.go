@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
+	"git-dr/bitbucket"
+	"git-dr/cmd"
+	"git-dr/git"
+	"git-dr/hg"
 	"log"
 	"os"
 	"strings"
 
-	"bitbucket.org/accuweather/git-dr/src/git-dr/api"
-	"bitbucket.org/accuweather/git-dr/src/git-dr/cmd"
-	"bitbucket.org/accuweather/git-dr/src/git-dr/git"
-	"bitbucket.org/accuweather/git-dr/src/git-dr/hg"
 	"github.com/spf13/viper"
 )
 
@@ -26,15 +26,11 @@ func init() {
 
 func main() {
 	log.Println("[BEGIN]")
-	// create api client
-	auth := newAuth()
-	client := api.Client{auth}
 
 	// create & execute api request
-	req := client.NewRequest("https://api.bitbucket.org/2.0/repositories/%s", "accuweather")
-	pages, err := req.Do()
+	pages, err := bitbucket.GetRepos()
 	if err != nil {
-		log.Fatalf("unable to make request: %s", err)
+		log.Fatalf("unable to get repos: %s", err)
 	}
 
 	repoCount := 0
@@ -77,13 +73,6 @@ func main() {
 	log.Println("[END]")
 }
 
-// newAuth creates a new api.Authenticator. Right now it only creates a BasicAuth object. Later, if it needs to, it can support OAuth2 or whatever else Bitbucket wants to do
-func newAuth() api.Authenticator {
-	username := viper.GetString("USERNAME")
-	app_password := viper.GetString("APP_PASSWORD")
-	return api.NewBasicAuth(username, app_password)
-}
-
 // getRepoInfo casts an interface and pulls out the repo name, scm type (git or hg) & a link to clone it
 func getRepoInfo(v interface{}) (name, scmType, cloneLink string) {
 	// go's type system is an unending nightmare
@@ -96,8 +85,8 @@ func getRepoInfo(v interface{}) (name, scmType, cloneLink string) {
 	for _, v := range cloneLinks {
 		link := v.(map[string]interface{})
 		if link["name"].(string) == "https" {
-			username := viper.GetString("USERNAME")
-			password := viper.GetString("APP_PASSWORD")
+			username := viper.GetString("bitbucket.username")
+			password := viper.GetString("bitbucket.app_password")
 			combined := fmt.Sprintf("%s:%s", username, password)
 			cloneLink = strings.Replace(link["href"].(string), username, combined, -1)
 		}

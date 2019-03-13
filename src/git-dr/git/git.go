@@ -18,6 +18,16 @@ func Update(name string) {
 	git("pull --all")
 }
 
+// Push pushes every branch to the remote
+func Push() {
+	git("push --all github")
+}
+
+// AddRemote adds a remote to the repo
+func AddRemote(remote string, username string, password string) {
+	git("remote add github %s:%s@%s", username, password, remote)
+}
+
 // git executes the specified git command
 func git(s string, args ...interface{}) {
 	cmdString := s

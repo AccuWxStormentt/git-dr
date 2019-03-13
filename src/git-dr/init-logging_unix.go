@@ -13,11 +13,11 @@ import (
 )
 
 func initLog() {
-	var logStdOut = viper.GetBool("LOG_STD")
-	var logDir = viper.GetString("LOG_DIR")
-	var logMaxSize = viper.GetInt("LOG_MAX_SIZE")
-	var logMaxBackups = viper.GetInt("LOG_MAX_BACKUPS")
-	var logMaxAge = viper.GetInt("LOG_MAX_AGE")
+	var logStdOut = viper.GetBool("logging.stdout")
+	var logDir = viper.GetString("logging.dir")
+	var logMaxSize = viper.GetInt("logging.max_size")
+	var logMaxBackups = viper.GetInt("logging.max_backups")
+	var logMaxAge = viper.GetInt("logging.max_age")
 
 	if !logStdOut {
 		logSink := &lumberjack.Logger{

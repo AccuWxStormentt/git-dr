@@ -1,9 +1,10 @@
 package api
 
 import (
+	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -11,58 +12,55 @@ import (
 
 // Request is a collection containing an endpoint, method, and headers. It's essentially an abstraction of an http request
 type Request struct {
-	endpoint string
-	method   string
-	headers  map[string]string
+	Endpoint string
+	Method   string
+	Body     string
+	Headers  map[string]string
 }
 
 // SetHeader sets the specified header
 func (r *Request) SetHeader(key, val string) {
-	r.headers[key] = val
+	r.Headers[key] = val
 }
 
-// Do executes the http request & returns a PageCollection and an error
-func (r *Request) Do() (*PageCollection, error) {
-	pages := &PageCollection{}
-	hasNext := true
-	endpoint := r.endpoint
+func (r *Request) Get() (string, error) {
+	r.Method = "GET"
+	return r.Do()
+}
 
-	for hasNext {
-		log.Printf("[API] %s %s\n", r.method, endpoint)
+func (r *Request) Post(vals map[string]string) (string, error) {
+	r.Method = "POST"
 
-		httpClient := &http.Client{
-			Timeout: time.Second * 10,
-		}
+	body, _ := json.Marshal(vals)
+	r.Body = string(body)
 
-		req, err := http.NewRequest(r.method, endpoint, nil)
-		if err != nil {
-			return nil, errors.Wrap(err, "http request initialization failed")
-		}
+	return r.Do()
+}
 
-		for k, v := range r.headers {
-			req.Header.Add(k, v)
-		}
-
-		resp, err := httpClient.Do(req)
-		if err != nil {
-			return nil, errors.Wrap(err, "http request execution failed")
-		}
-
-		respString, err := ioutil.ReadAll(resp.Body)
-		defer resp.Body.Close()
-		if err != nil {
-			return nil, errors.Wrap(err, "http response reading failed")
-		}
-
-		page, err := ParsePage(string(respString))
-		if err != nil {
-			return nil, errors.Wrap(err, "http response parsing failed")
-		}
-
-		pages.Add(page)
-
-		endpoint, hasNext = page["next"].(string)
+func (r *Request) Do() (string, error) {
+	httpClient := &http.Client{
+		Timeout: time.Second * 10,
 	}
 
-	return pages, nil
+	req, err := http.NewRequest(r.Method, r.Endpoint, strings.NewReader(r.Body))
+	if err != nil {
+		return "", errors.Wrap(err, "http request initialization failed")
+	}
+
+	for k, v := range r.Headers {
+		req.Header.Add(k, v)
+	}
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return "", errors.Wrap(err, "http request execution failed")
+	}
+
+	respString, err := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return "", errors.Wrap(err, "http response reading failed")
+	}
+
+	return string(respString), nil
 }
