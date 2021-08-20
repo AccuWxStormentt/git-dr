@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"git-dr/bitbucket"
 	"git-dr/cmd"
 	"git-dr/git"
+	"git-dr/github"
 	"git-dr/hg"
+	"git-dr/repo"
 	"log"
 	"os"
 	"strings"
@@ -27,71 +28,50 @@ func init() {
 func main() {
 	log.Println("[BEGIN]")
 
-	// create & execute api request
-	pages, err := bitbucket.GetRepos()
-	if err != nil {
-		log.Fatalf("unable to get repos: %s", err)
-	}
-
-	repoCount := 0
-	// process api response
-	for hasNext := true; hasNext; hasNext = pages.Next() {
-		p := pages.Current()
-
-		repositories := p["values"].([]interface{})
-		for _, v := range repositories {
-			name, scmType, cloneLink := getRepoInfo(v)
-			log.Printf("[REPO] %s\n", name)
-
-			// if the repo hasn't been cloned, we need to clone it.
-			// if the repo has already been cloned, we just need to update it.
-			if _, err := os.Stat(name); os.IsNotExist(err) {
-				log.Printf("[CLONE] %s\n", cloneLink)
-				switch scmType {
-				case "hg":
-					hg.Clone(cloneLink)
-				case "git":
-					git.Clone(cloneLink)
-				}
-			} else {
-				log.Printf("[UPDATE] %s\n", name)
-
-				cmd.Chdir(name)
-				switch scmType {
-				case "hg":
-					hg.Update(name)
-				case "git":
-					git.Update(name)
-				}
-				cmd.Chdir("../")
-			}
-
-			repoCount++
-		}
-	}
-	log.Printf("[REPORT] Handled %d repos\n", repoCount)
-	log.Println("[END]")
+	github.BackupAll()
+	os.Exit(0)
 }
 
-// getRepoInfo casts an interface and pulls out the repo name, scm type (git or hg) & a link to clone it
-func getRepoInfo(v interface{}) (name, scmType, cloneLink string) {
-	// go's type system is an unending nightmare
-	repo := v.(map[string]interface{})
-	name = repo["slug"].(string)
-	scmType = repo["scm"].(string)
+func clone(repo repo.Repo) {
+	log.Printf("[CLONE] %s\n", repo.CloneLink)
+	switch repo.ScmType {
+	case "hg":
+		hg.Clone(repo.CloneLink)
+	case "git":
+		git.Clone(repo.CloneLink)
+	}
+}
 
-	links := repo["links"].(map[string]interface{})
-	cloneLinks := links["clone"].([]interface{})
-	for _, v := range cloneLinks {
-		link := v.(map[string]interface{})
-		if link["name"].(string) == "https" {
-			username := viper.GetString("bitbucket.username")
-			password := viper.GetString("bitbucket.app_password")
-			combined := fmt.Sprintf("%s:%s", username, password)
-			cloneLink = strings.Replace(link["href"].(string), username, combined, -1)
+func update(repo repo.Repo) {
+	log.Printf("[UPDATE] %s\n", repo.Name)
+
+	cmd.Chdir(repo.Name)
+	switch repo.ScmType {
+	case "hg":
+		hg.Update(repo.Name)
+	case "git":
+		git.Update(repo.Name)
+	}
+	cmd.Chdir("../")
+}
+
+func migrate(repo repo.Repo) {
+	cmd.Chdir(repo.Name)
+	log.Printf("[MIGRATE] %s\n", repo.Name)
+	if !github.Exists(repo.Name) {
+		github.Create(repo)
+		git.AddRemote(repo.Name, viper.GetString("github.username"), viper.GetString("github.password"))
+		git.Push()
+	}
+	cmd.Chdir("../")
+}
+
+func contains(s []string, v string) bool {
+	for _, cur := range s {
+		if cur == v {
+			return true
 		}
 	}
-	// nevermind, the nightmare is over. we're good now
 
-	return
+	return false
 }

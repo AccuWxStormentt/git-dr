@@ -1,21 +1,53 @@
 package git
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"strings"
 
-	"bitbucket.org/accuweather/git-dr/src/git-dr/cmd"
+	"git-dr/cmd"
 )
 
 // Clone clones the repo at the url provided
 func Clone(url string) {
-	git("clone %s", url)
+	git("clone %s --bare", url)
+}
+
+func RemoteBranches() []string {
+	//branchesCmd := fmt.Sprintf("-c \"%s\"", "for b in `git branch -r | grep -v -- '->'`; do git branch --track ${b##origin/} $b; done")
+	branches := cmd.Run("git", "branch -r")
+
+	var branchList []string
+	scanner := bufio.NewScanner(strings.NewReader(branches))
+	for scanner.Scan() {
+		line := scanner.Text()
+		if !strings.Contains(line, "->") && strings.Contains(line, "origin") {
+			branchList = append(branchList, strings.TrimSpace(line))
+		}
+	}
+
+	return branchList
 }
 
 // Update cd's into the repository and updates the submodules and pulls any new changes
 func Update(name string) {
-	git("submodule update --recursive --remote")
-	git("pull --all")
+	// checkout every branch to make sure we're tracking everything
+	branches := RemoteBranches()
+	for _, b := range branches {
+		noRemote := strings.Replace(b, "origin/", "", 1)
+		git("checkout %s", noRemote)
+	}
+
+	// some repos don't have a master
+	for _, b := range branches {
+		if b == "master" {
+			git("checkout master")
+		}
+	}
+	//git("submodule update --recursive --remote")
+	//git("pull --all")
+	git("fetch --all")
 }
 
 // Push pushes every branch to the remote
@@ -24,8 +56,8 @@ func Push() {
 }
 
 // AddRemote adds a remote to the repo
-func AddRemote(remote string, username string, password string) {
-	git("remote add github %s:%s@%s", username, password, remote)
+func AddRemote(name string, username string, password string) {
+	git("remote add github https://%s:%s@github.com/AccuWeather-Inc/%s.git", username, password, name)
 }
 
 // git executes the specified git command

@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -52,8 +53,13 @@ func (r *Request) Do() (string, error) {
 	}
 
 	resp, err := httpClient.Do(req)
+	log.Println(resp.StatusCode)
 	if err != nil {
 		return "", errors.Wrap(err, "http request execution failed")
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 300 {
+		return "", errors.New("non 200 response")
 	}
 
 	respString, err := ioutil.ReadAll(resp.Body)
